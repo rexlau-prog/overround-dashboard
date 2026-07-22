@@ -1,22 +1,81 @@
 {
   "display_name": "Overround MM",
-  "status": "awaiting",
-  "generated_utc": null,
+  "status": "recording",
+  "phase": "pre-launch · data build",
+  "generated_utc": "2026-07-22T07:43:04Z",
   "source_box": "aws-dublin",
-  "currency": "USD",
-  "kpis": {
-    "book_equity": null,
-    "start_equity": null,
-    "realized_pnl": null,
-    "return_pct": null,
-    "open_positions": null,
-    "closed_trades": null,
-    "win_rate_pct": null,
-    "note": null
+  "decision_date": "2026-08-05",
+  "recorder": {
+    "service": "pm-micro",
+    "active": true,
+    "recording_since_utc": "2026-07-22T05:44Z",
+    "window_utc": [
+      "2026-07-22T05:44Z",
+      "2026-07-22T07:43Z"
+    ],
+    "window_hours": 2.0,
+    "totals": {
+      "prints": 67866,
+      "bba": 343692,
+      "depth": 16448
+    }
   },
-  "equity_curve": { "labels": [], "values": [] },
-  "sleeves": [],
-  "open_positions": [],
-  "recent_trades": [],
-  "recent_signals": []
+  "markets": [
+    {
+      "market": "BTC",
+      "prints": 53707,
+      "bba": 147974,
+      "depth": 7038
+    },
+    {
+      "market": "ETH",
+      "prints": 8225,
+      "bba": 50346,
+      "depth": 4360
+    },
+    {
+      "market": "SOL",
+      "prints": 3848,
+      "bba": 72050,
+      "depth": 2954
+    },
+    {
+      "market": "XRP",
+      "prints": 2086,
+      "bba": 73322,
+      "depth": 2096
+    }
+  ],
+  "calibration": {
+    "fit": true,
+    "bands": [
+      {
+        "band": "early",
+        "tau": "180–300s",
+        "a": 0.65,
+        "b": 0.0,
+        "n_train": 27000,
+        "n_test": 6750
+      },
+      {
+        "band": "mid",
+        "tau": "60–180s",
+        "a": 0.6,
+        "b": 0.0,
+        "n_train": 35981,
+        "n_test": 9000
+      },
+      {
+        "band": "late",
+        "tau": "0–60s",
+        "a": 0.55,
+        "b": 0.05,
+        "n_train": 17982,
+        "n_test": 4499
+      }
+    ],
+    "samples_total": 101212,
+    "fit_utc": "2026-07-22T05:46Z"
+  },
+  "notes": "Read-only recorder — NO trading. At the decision date the income-side re-sim runs (calibrated fair + benign/toxic print split + queue/depth fill model) to decide go/no-go on a tiny live maker pilot."
 }
