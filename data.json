@@ -1,0 +1,22 @@
+{
+  "display_name": "Overround MM",
+  "status": "awaiting",
+  "generated_utc": null,
+  "source_box": "aws-dublin",
+  "currency": "USD",
+  "kpis": {
+    "book_equity": null,
+    "start_equity": null,
+    "realized_pnl": null,
+    "return_pct": null,
+    "open_positions": null,
+    "closed_trades": null,
+    "win_rate_pct": null,
+    "note": null
+  },
+  "equity_curve": { "labels": [], "values": [] },
+  "sleeves": [],
+  "open_positions": [],
+  "recent_trades": [],
+  "recent_signals": []
+}
