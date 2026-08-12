@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Overround MM · pre-launch status</title>
+<title>Overround MM · go/no-go result</title>
 <style>
   :root{
     --bg:#0b0e14; --panel:#131823; --panel2:#1a2030; --line:#26304a;
@@ -23,23 +23,21 @@
     background:radial-gradient(120% 140% at 0% 0%,#182034 0%,#0e1320 55%);
     padding:20px 22px;margin:12px 0 18px}
   .hero h1{margin:0 0 6px;font-size:22px}
-  .hero .sub{color:var(--muted);font-size:13px;max-width:760px}
+  .hero .sub{color:var(--muted);font-size:13px;max-width:780px}
   .hero .meta{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px;font-size:11.5px}
   .tag{background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:3px 11px;color:var(--muted);font-family:var(--mono)}
   .tag b{color:var(--txt);font-weight:600}
   .badge{font-family:var(--mono);font-size:11px;padding:3px 10px;border-radius:999px;font-weight:600;border:1px solid}
-  .b-sim{background:rgba(255,193,77,.12);color:var(--amber);border-color:rgba(255,193,77,.38)}
-  .b-rec{background:rgba(58,210,159,.14);color:var(--green);border-color:rgba(58,210,159,.4)}
-  .b-off{background:rgba(255,107,107,.12);color:var(--red);border-color:rgba(255,107,107,.35)}
+  .b-go{background:rgba(58,210,159,.14);color:var(--green);border-color:rgba(58,210,159,.45)}
   .b-await{background:rgba(255,193,77,.12);color:var(--amber);border-color:rgba(255,193,77,.38)}
   .dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;vertical-align:middle}
   .dot.on{background:var(--green);box-shadow:0 0 0 3px rgba(58,210,159,.18)}
   .dot.off{background:var(--red)}
 
-  .banner{display:flex;align-items:flex-start;gap:10px;
-    background:rgba(77,163,255,.07);border:1px solid rgba(77,163,255,.30);border-radius:12px;
-    padding:13px 16px;margin-bottom:18px;color:var(--accent);font-size:13px}
-  .banner b{color:var(--txt)}
+  .verdict{display:flex;align-items:flex-start;gap:11px;
+    background:rgba(58,210,159,.07);border:1px solid rgba(58,210,159,.32);border-radius:12px;
+    padding:14px 16px;margin-bottom:18px;color:var(--green);font-size:13.5px}
+  .verdict b{color:var(--txt)}
   .await-banner{display:none;align-items:center;gap:10px;background:rgba(255,193,77,.08);
     border:1px solid rgba(255,193,77,.35);border-radius:12px;padding:13px 16px;margin-bottom:18px;color:var(--amber);font-size:13px}
 
@@ -47,19 +45,42 @@
   .kpi{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:13px 14px}
   .kl{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em}
   .kv{font-size:23px;font-weight:600;margin:3px 0;font-family:var(--mono)}
+  .kv.sm{font-size:15px}
   .ks{color:var(--muted);font-size:11px}
-  .kv.sm{font-size:16px}
+  .pos{color:var(--green)}
 
   .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:15px 16px;margin-bottom:16px}
   .card h2{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin:0 0 4px}
   .card .hint{color:var(--muted);font-size:12px;margin:0 0 11px}
   .cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-  @media(max-width:820px){.cols{grid-template-columns:1fr}}
+  @media(max-width:860px){.cols{grid-template-columns:1fr}}
+
+  .finding{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:860px){.finding{grid-template-columns:1fr}}
+  .fbox{border-radius:10px;padding:13px 14px;font-size:13px;border:1px solid}
+  .f-bad{background:rgba(255,107,107,.06);border-color:rgba(255,107,107,.3)}
+  .f-good{background:rgba(58,210,159,.06);border-color:rgba(58,210,159,.3)}
+  .fbox .flabel{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+  .f-bad .flabel{color:var(--red)} .f-good .flabel{color:var(--green)}
+
   table{width:100%;border-collapse:collapse;font-size:12.5px}
-  th,td{text-align:left;padding:6px 9px;border-bottom:1px solid var(--line);white-space:nowrap}
-  th{color:var(--muted);font-weight:600;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em}
+  th,td{text-align:left;padding:6px 9px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--muted);font-weight:600;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
   td.mono,th.mono{font-family:var(--mono)}.r{text-align:right}
-  .muted-row{color:var(--muted);text-align:center;padding:20px}
+  tr.best td{background:rgba(58,210,159,.07)}
+  .bar{display:inline-block;height:6px;border-radius:3px;background:var(--green);vertical-align:middle;margin-left:8px;opacity:.75}
+  .imp{font-family:var(--mono);font-size:10px;padding:2px 7px;border-radius:5px;border:1px solid;white-space:nowrap}
+  .i-high{color:var(--red);border-color:rgba(255,107,107,.4);background:rgba(255,107,107,.08)}
+  .i-med{color:var(--amber);border-color:rgba(255,193,77,.4);background:rgba(255,193,77,.08)}
+  .i-low{color:var(--muted);border-color:var(--line);background:var(--panel2)}
+  ol.steps{margin:0;padding-left:0;list-style:none;counter-reset:s}
+  ol.steps li{counter-increment:s;position:relative;padding:8px 0 8px 32px;font-size:13px;border-top:1px dashed var(--line)}
+  ol.steps li:first-child{border-top:none}
+  ol.steps li::before{content:counter(s);position:absolute;left:0;top:8px;width:21px;height:21px;
+    background:var(--panel2);border:1px solid var(--line);border-radius:6px;color:var(--accent);
+    font-family:var(--mono);font-size:11px;display:flex;align-items:center;justify-content:center}
+  ol.steps .eta{float:right;color:var(--muted);font-family:var(--mono);font-size:11px}
+  ol.steps .d{color:var(--muted);font-size:12px}
   footer{margin-top:34px;color:var(--muted);font-size:11.5px;border-top:1px solid var(--line);padding-top:14px}
   footer code{font-family:var(--mono)}
 </style>
@@ -70,46 +91,54 @@
 
   <header class="hero">
     <h1>Overround MM</h1>
-    <div class="sub">Two-sided market-making on Polymarket 5-minute crypto Up/Down binaries — quote resting
-      bids on both YES and NO below fair value to capture the book overround plus the 20% maker rebate.
-      Currently <b>pre-launch</b>: a read-only recorder is collecting microstructure to feed a go/no-go
-      income-side re-sim. No orders, no capital.</div>
+    <div class="sub">Two-sided market-making on Polymarket 5-minute crypto Up/Down binaries — quote both YES and
+      NO below mid so the pair costs under $1, and exactly one side settles at $1. Income is the book overround
+      plus the 20% maker rebate.</div>
     <div class="meta">
-      <span class="badge b-sim" id="phaseBadge">Pre-launch · data build</span>
+      <span class="badge b-go" id="phaseBadge">—</span>
+      <span class="tag">decided&nbsp;<b id="mDecided">—</b></span>
       <span class="tag">source&nbsp;<b id="mSource">—</b></span>
       <span class="tag">generated&nbsp;<b id="mGen">—</b></span>
     </div>
   </header>
 
-  <div class="banner" id="infoBanner">
-    ℹ️&nbsp;<span><b>Not trading yet — by design.</b> This is a data-collection status page. The recorder logs
-    prints, best-bid/ask and L2 depth; the fair-value calibration is fit offline. At the decision date the
-    income-side re-sim decides whether a competent maker clears breakeven before any live pilot.</span>
-  </div>
-  <div class="await-banner" id="awaitBanner">
-    ⏳&nbsp;<span><b>Awaiting first data push.</b> The box overwrites <code>./data.json</code> and this page fills in.</span>
-  </div>
+  <div class="verdict" id="verdict"></div>
+  <div class="await-banner" id="awaitBanner">⏳&nbsp;<span><b>Awaiting data push.</b></span></div>
 
   <div class="grid" id="kpis"></div>
 
+  <div class="card"><h2>The decisive finding</h2>
+    <p class="hint">What separated a losing design from a profitable one — and it was not a better model.</p>
+    <div class="finding">
+      <div class="fbox f-bad"><div class="flabel">✕ Rejected — model-anchored</div><span id="fRejected"></span></div>
+      <div class="fbox f-good"><div class="flabel">✓ Adopted — book-mid anchored</div><span id="fAdopted"></span></div>
+    </div>
+  </div>
+
+  <div class="card"><h2>Backtest — every configuration positive</h2>
+    <p class="hint" id="btHint">—</p>
+    <table><thead><tr><th>Spread</th><th>Queue model</th><th class="r">Shares filled</th><th class="r">Net P&amp;L</th><th class="r">Per 100sh</th></tr></thead>
+    <tbody id="configs"></tbody></table>
+  </div>
+
   <div class="cols">
-    <div class="card"><h2>Recorder coverage</h2>
-      <p class="hint" id="covHint">—</p>
-      <table><thead><tr><th>Market</th><th class="r">Prints</th><th class="r">Bid/Ask</th><th class="r">L2 depth</th></tr></thead>
-      <tbody id="markets"></tbody></table></div>
-    <div class="card"><h2>Fair-value calibration</h2>
-      <p class="hint">Fitted P = Φ(a·z + b) per time-to-expiry band. <span class="mono">a&lt;1</span> shrinks toward 0.5 (fat tails).</p>
-      <table><thead><tr><th>Band</th><th>τ to expiry</th><th class="r">a</th><th class="r">b</th><th class="r">train / test</th></tr></thead>
-      <tbody id="calib"></tbody></table></div>
+    <div class="card"><h2>Risks &amp; limits</h2>
+      <p class="hint">Disclosed in the study — what the backtest structurally cannot test.</p>
+      <table><thead><tr><th>Risk</th><th>Impact</th></tr></thead><tbody id="risks"></tbody></table></div>
+    <div class="card"><h2>Next steps</h2>
+      <p class="hint" id="capHint">—</p>
+      <ol class="steps" id="steps"></ol></div>
   </div>
 
-  <div class="card"><h2>At the decision date</h2>
-    <p class="hint" id="notes" style="font-size:13px">—</p>
+  <div class="card"><h2>Recorder — now building an out-of-sample window</h2>
+    <p class="hint" id="recHint">—</p>
+    <table><thead><tr><th>Stream</th><th class="r">Total rows</th><th class="r">Out-of-sample rows</th></tr></thead>
+    <tbody id="rec"></tbody></table>
   </div>
 
-  <footer>
-    Read-only market-data recorder — no orders, no capital. Static snapshot of <code>data.json</code>,
-    refreshed client-side every 60s. Built with <code>Claude Code</code>.
+  <footer id="foot">
+    Research figures transcribed from the study report; recorder figures read live. No capital deployed.
+    Refreshed client-side every 60s. Built with <code>Claude Code</code>.
   </footer>
 </div>
 
@@ -117,79 +146,70 @@
 const $ = id => document.getElementById(id);
 const dash = v => (v===null||v===undefined||v==="") ? "—" : v;
 const nf = v => (v===null||v===undefined||v===""||!Number.isFinite(Number(v))) ? "—" : Number(v).toLocaleString();
+const usd = v => (v===null||v===undefined) ? "—" : (v<0?"-$":"$")+Math.abs(v).toLocaleString();
 
 function kpi(label,value,sub,cls){
   return `<div class="kpi"><div class="kl">${label}</div>
     <div class="kv ${cls||''}">${value}</div><div class="ks">${sub||''}</div></div>`;
 }
 
-function daysUntil(dateStr){
-  if(!dateStr) return null;
-  const target = new Date(dateStr + "T00:00:00Z").getTime();
-  const n = new Date();
-  const todayUTC = Date.UTC(n.getUTCFullYear(), n.getUTCMonth(), n.getUTCDate());
-  return Math.max(0, Math.round((target - todayUTC) / 86400000));
-}
-
 function render(d){
-  const awaiting = !d || d.status==="awaiting" || !d.generated_utc;
+  const awaiting = !d || !d.generated_utc;
   $("awaitBanner").style.display = awaiting ? "flex" : "none";
-  $("infoBanner").style.display  = awaiting ? "none" : "flex";
-  const pb=$("phaseBadge");
-  if(awaiting){pb.textContent="Awaiting data";pb.className="badge b-await";}
+  $("verdict").style.display = awaiting ? "none" : "flex";
+  if(awaiting){ $("phaseBadge").textContent="Awaiting data"; $("phaseBadge").className="badge b-await"; return; }
 
-  d = d || {};
-  const rec = d.recorder || {};
-  const cal = d.calibration || {};
-  $("mSource").textContent = dash(d.source_box);
-  $("mGen").textContent    = dash(d.generated_utc);
-  if(!awaiting){ pb.textContent = d.phase || "Pre-launch"; pb.className = "badge b-sim"; }
+  const dec = d.decision||{}, bt = d.backtest||{}, kf = d.key_finding||{}, rec = d.recorder||{};
+  $("phaseBadge").textContent = d.phase || "—"; $("phaseBadge").className = "badge b-go";
+  $("mDecided").textContent = dash(dec.date);
+  $("mSource").textContent  = dash(d.source_box);
+  $("mGen").textContent     = dash(d.generated_utc);
 
-  const active = rec.active;
-  const recBadge = active===true
-      ? `<span class="dot on"></span>Live`
-      : active===false ? `<span class="dot off"></span>Down` : "—";
-  const dd = daysUntil(d.decision_date);
-  const t = rec.totals || {};
+  $("verdict").innerHTML = `✅&nbsp;<span><b>${dash(dec.verdict)} — ${dash(dec.headline)}.</b> ${dash(dec.call)}
+    Every one of the ${dash(bt.configs_positive)} parameter sets came out positive over ${nf(bt.windows)} market windows.
+    Source: <code>${dash(dec.report)}</code>.</span>`;
 
   $("kpis").innerHTML =
-    kpi("Decision in", dd===null?"—":`${dd}<span style="font-size:13px;font-weight:400"> d</span>`,
-        d.decision_date?("re-sim "+d.decision_date):"", "") +
-    kpi("Recorder", `<span class="sm">${recBadge}</span>`, rec.recording_since_utc?("since "+rec.recording_since_utc):"") +
-    kpi("Prints", nf(t.prints), "trade prints") +
-    kpi("Bid/Ask", nf(t.bba), "top-of-book quotes") +
-    kpi("L2 depth", nf(t.depth), "5-level snapshots") +
-    kpi("Markets", (d.markets||[]).length || "—", "5-min crypto");
+    kpi("Net edge", `+$${bt.configs?.find(c=>c.best)?.per100 ?? "—"}`, "per 100 shares · best config", "pos") +
+    kpi("Backtest net", usd(bt.configs?.find(c=>c.best)?.net), `${dash(bt.quote_size)} quotes · ~${usd(bt.daily_avg)}/day`, "pos") +
+    kpi("Configs positive", dash(bt.configs_positive), "all parameter sets", "pos") +
+    kpi("Profitable days", dash(bt.profitable_days), `worst day ${usd(bt.worst_day)}`) +
+    kpi("Significance", `t≈${dash(bt.t_stat)}`, `p≈${dash(bt.p_value)} on daily P&L`) +
+    kpi("Out-of-sample", `${dash(rec.oos?.days)}<span style="font-size:13px;font-weight:400"> d</span>`, `recorded since ${dash(rec.oos?.since)} · untested`);
 
-  // coverage hint
-  if(rec.window_utc){
-    $("covHint").textContent =
-      `Retained DB window ${rec.window_utc[0]} → ${rec.window_utc[1]}` +
-      (rec.window_hours!=null?`  (${rec.window_hours}h)`:"");
-  } else $("covHint").textContent = "—";
+  $("fRejected").textContent = dash(kf.rejected);
+  $("fAdopted").textContent  = dash(kf.adopted);
 
-  // markets
-  const mtb=$("markets");
-  const ms=d.markets||[];
-  mtb.innerHTML = ms.length ? ms.map(m=>
-    `<tr><td class="mono">${m.market}</td><td class="r mono">${nf(m.prints)}</td>
-     <td class="r mono">${nf(m.bba)}</td><td class="r mono">${nf(m.depth)}</td></tr>`).join("")
-    : `<tr><td colspan="4" class="muted-row">No rows yet.</td></tr>`;
+  $("btHint").textContent =
+    `In-sample ${dash(bt.window?.[0])} → ${dash(bt.window?.[1])} · ${dash(bt.days)} days (${dash(bt.trading_days)} trading) · `
+    + `${nf(bt.windows)} windows · ${nf(bt.rows?.prints)} prints, ${nf(bt.rows?.bba)} quotes, ${nf(bt.rows?.depth)} depth snapshots.`;
 
-  // calibration
-  const ctb=$("calib");
-  const bands=cal.bands||[];
-  ctb.innerHTML = bands.length ? bands.map(b=>
-    `<tr><td class="mono">${b.band}</td><td class="mono">${dash(b.tau)}</td>
-     <td class="r mono">${dash(b.a)}</td><td class="r mono">${dash(b.b)}</td>
-     <td class="r mono">${nf(b.n_train)} / ${nf(b.n_test)}</td></tr>`).join("")
-    : `<tr><td colspan="5" class="muted-row">Not fit yet.</td></tr>`;
-  if(bands.length && cal.samples_total!=null){
-    ctb.innerHTML += `<tr><td class="mono muted">total</td><td></td><td></td><td></td>
-     <td class="r mono">${nf(cal.samples_total)} samples</td></tr>`;
-  }
+  const cfgs = bt.configs||[];
+  const mx = Math.max(...cfgs.map(c=>c.per100||0), 0.01);
+  $("configs").innerHTML = cfgs.map(c=>
+    `<tr class="${c.best?'best':''}"><td class="mono">${dash(c.spread)}${c.best?'  ★':''}</td>
+     <td class="mono">${dash(c.queue)}</td><td class="r mono">${nf(c.shares)}</td>
+     <td class="r mono pos">${usd(c.net)}</td>
+     <td class="r mono pos">+$${dash(c.per100)}<span class="bar" style="width:${(c.per100/mx*46).toFixed(0)}px"></span></td></tr>`).join("");
 
-  $("notes").textContent = dash(d.notes);
+  $("risks").innerHTML = (d.risks||[]).map(r=>
+    `<tr><td><b>${dash(r.risk)}</b><div style="color:var(--muted);font-size:12px;margin-top:2px">${dash(r.note)}</div></td>
+     <td><span class="imp i-${r.impact}">${dash(r.impact)}</span></td></tr>`).join("");
+
+  $("capHint").textContent = `Pilot capital ${dash(d.capital?.pilot)} · real operating capital ${dash(d.capital?.operating)}.`;
+  $("steps").innerHTML = (d.next_steps||[]).map(s=>
+    `<li><span class="eta">${dash(s.eta)}</span><b>${dash(s.step)}</b><div class="d">${dash(s.detail)}</div></li>`).join("");
+
+  const active = rec.active;
+  $("recHint").innerHTML =
+    `<span class="dot ${active?'on':'off'}"></span>${active?'Live':'Down'} · <code>${dash(rec.service)}</code> · `
+    + `${dash(rec.window_utc?.[0])} → ${dash(rec.window_utc?.[1])}. Rows past the backtest cut-off have never been fitted `
+    + `— a clean out-of-sample test set.`;
+  const t = rec.totals||{}, o = rec.oos?.rows||{};
+  $("rec").innerHTML = ["prints","bba","depth"].map(k=>
+    `<tr><td class="mono">${k}</td><td class="r mono">${nf(t[k])}</td><td class="r mono">${nf(o[k])}</td></tr>`).join("");
+
+  if(d.notes) $("foot").innerHTML = `${d.notes} Refreshed client-side every 60s. Built with <code>Claude Code</code>.`;
 }
 
 async function load(){

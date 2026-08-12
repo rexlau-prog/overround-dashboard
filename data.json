@@ -1,81 +1,174 @@
 {
   "display_name": "Overround MM",
-  "status": "recording",
-  "phase": "pre-launch · data build",
-  "generated_utc": "2026-07-22T07:43:04Z",
+  "status": "decided",
+  "phase": "qualified green light · pilot pending",
+  "generated_utc": "2026-08-12T08:07:42Z",
   "source_box": "aws-dublin",
-  "decision_date": "2026-08-05",
+  "decision": {
+    "date": "2026-08-07",
+    "verdict": "Qualified green light",
+    "headline": "+$2.55 per 100 shares",
+    "call": "Small live pilot approved — NOT meaningful capital.",
+    "report": "Overround_策略研究報告2.pdf"
+  },
+  "backtest": {
+    "window": [
+      "2026-07-22",
+      "2026-08-06"
+    ],
+    "days": 15,
+    "trading_days": 14,
+    "windows": 15814,
+    "rows": {
+      "prints": 10400000,
+      "bba": 63000000,
+      "depth": 2800000
+    },
+    "configs": [
+      {
+        "spread": "1¢",
+        "queue": "Q_SKIP",
+        "shares": 70875,
+        "net": 1707,
+        "per100": 2.41
+      },
+      {
+        "spread": "1¢",
+        "queue": "Q_200",
+        "shares": 101171,
+        "net": 2577,
+        "per100": 2.55,
+        "best": true
+      },
+      {
+        "spread": "2¢",
+        "queue": "Q_SKIP",
+        "shares": 35493,
+        "net": 529,
+        "per100": 1.49
+      },
+      {
+        "spread": "2¢",
+        "queue": "Q_200",
+        "shares": 54801,
+        "net": 1260,
+        "per100": 2.3
+      },
+      {
+        "spread": "4¢",
+        "queue": "Q_SKIP",
+        "shares": 13181,
+        "net": 389,
+        "per100": 2.96
+      },
+      {
+        "spread": "4¢",
+        "queue": "Q_200",
+        "shares": 30384,
+        "net": 661,
+        "per100": 2.17
+      }
+    ],
+    "configs_positive": "6 / 6",
+    "profitable_days": "11 / 14",
+    "t_stat": 3.3,
+    "p_value": 0.005,
+    "worst_day": -144,
+    "daily_avg": 184,
+    "quote_size": "25 shares"
+  },
+  "key_finding": {
+    "rejected": "Model-anchored quoting FAILED: −$8–9 per 100sh. Two causes — our Chainlink feed runs ~5s stale (at zero lag markout flips positive), and 33% of model quotes sat ABOVE the market's best bid, i.e. arguing with the book.",
+    "adopted": "Book-mid anchored quoting: quote symmetrically around the order book's own mid. No view, no model, no oracle — which also structurally removes the latency problem, because the book is real-time."
+  },
   "recorder": {
     "service": "pm-micro",
     "active": true,
-    "recording_since_utc": "2026-07-22T05:44Z",
     "window_utc": [
       "2026-07-22T05:44Z",
-      "2026-07-22T07:43Z"
+      "2026-08-12T08:07Z"
     ],
-    "window_hours": 2.0,
     "totals": {
-      "prints": 67866,
-      "bba": 343692,
-      "depth": 16448
+      "prints": 14129137,
+      "bba": 84691787,
+      "depth": 3961936
+    },
+    "oos": {
+      "since": "2026-08-07",
+      "days": 5.3,
+      "rows": {
+        "prints": 3109060,
+        "bba": 18368488,
+        "depth": 946592
+      }
     }
   },
-  "markets": [
+  "risks": [
     {
-      "market": "BTC",
-      "prints": 53707,
-      "bba": 147974,
-      "depth": 7038
+      "risk": "Queue position unverifiable",
+      "impact": "high",
+      "note": "87% of fills sat at levels where depth ahead couldn't be confirmed. Sign survives all 4 queue assumptions, but volume drops sharply under the conservative one."
     },
     {
-      "market": "ETH",
-      "prints": 8225,
-      "bba": 50346,
-      "depth": 4360
+      "risk": "Competitor reaction",
+      "impact": "high",
+      "note": "Backtest assumes the other ~27 pro makers don't react to our presence. In a live book they will."
     },
     {
-      "market": "SOL",
-      "prints": 3848,
-      "bba": 72050,
-      "depth": 2954
+      "risk": "Cancel/replace latency",
+      "impact": "med",
+      "note": "Live orders go through the REST API; quote-refresh speed is still unmeasured."
     },
     {
-      "market": "XRP",
-      "prints": 2086,
-      "bba": 73322,
-      "depth": 2096
+      "risk": "Sample period",
+      "impact": "med",
+      "note": "15 days, one market regime, no stress event. (The live recorder is now building an out-of-sample window against exactly this.)"
+    },
+    {
+      "risk": "Daily hit rate",
+      "impact": "med",
+      "note": "79% is below the 85%+ typical of a mature making book; P&L also skews to the back of the sample."
+    },
+    {
+      "risk": "Scale ceiling",
+      "impact": "med",
+      "note": "~$184/day at 25-share quotes. Scaling is capped by real order flow arriving at our price levels."
+    },
+    {
+      "risk": "No rebate subsidy",
+      "impact": "low",
+      "note": "5-min markets sit outside the daily liquidity-rewards pool — the only maker income is 20% of the taker fee on filled size."
     }
   ],
-  "calibration": {
-    "fit": true,
-    "bands": [
-      {
-        "band": "early",
-        "tau": "180–300s",
-        "a": 0.65,
-        "b": 0.0,
-        "n_train": 27000,
-        "n_test": 6750
-      },
-      {
-        "band": "mid",
-        "tau": "60–180s",
-        "a": 0.6,
-        "b": 0.0,
-        "n_train": 35981,
-        "n_test": 9000
-      },
-      {
-        "band": "late",
-        "tau": "0–60s",
-        "a": 0.55,
-        "b": 0.05,
-        "n_train": 17982,
-        "n_test": 4499
-      }
-    ],
-    "samples_total": 101212,
-    "fit_utc": "2026-07-22T05:46Z"
+  "next_steps": [
+    {
+      "n": 1,
+      "step": "Build the quoting engine",
+      "detail": "order signing, live book stream, cancel/replace loop, kill switch",
+      "eta": "1–2 weeks"
+    },
+    {
+      "n": 2,
+      "step": "Small live pilot",
+      "detail": "one mid-liquidity market (ETH or SOL), minimum quote size",
+      "eta": "2–4 weeks"
+    },
+    {
+      "n": 3,
+      "step": "Daily evaluation",
+      "detail": "markout (fair-value drift 30s after fill) as the primary metric",
+      "eta": "ongoing"
+    },
+    {
+      "n": 4,
+      "step": "Scale or kill",
+      "detail": "positive markout + stable hit rate → scale gradually; otherwise shut it",
+      "eta": "—"
+    }
+  ],
+  "capital": {
+    "pilot": "$500–1,000",
+    "operating": "$10,000–20,000"
   },
-  "notes": "Read-only recorder — NO trading. At the decision date the income-side re-sim runs (calibrated fair + benign/toxic print split + queue/depth fill model) to decide go/no-go on a tiny live maker pilot."
+  "notes": "Backtest figures are transcribed from the 2026-08-07 study report; recorder figures are read live. Still a promising hypothesis, not a validated business — no capital deployed."
 }
