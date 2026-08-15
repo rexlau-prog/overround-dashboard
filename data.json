@@ -2,7 +2,7 @@
   "display_name": "Overround MM",
   "status": "decided",
   "phase": "qualified green light · pilot pending",
-  "generated_utc": "2026-08-15T06:40:03Z",
+  "generated_utc": "2026-08-15T12:40:04Z",
   "source_box": "aws-dublin",
   "decision": {
     "date": "2026-08-07",
@@ -86,20 +86,20 @@
     "active": true,
     "window_utc": [
       "2026-07-22T05:44Z",
-      "2026-08-15T06:40Z"
+      "2026-08-15T12:40Z"
     ],
     "totals": {
-      "prints": 15786697,
-      "bba": 94603650,
-      "depth": 4483771
+      "prints": 15891409,
+      "bba": 95469395,
+      "depth": 4523789
     },
     "oos": {
       "since": "2026-08-07",
-      "days": 8.3,
+      "days": 8.5,
       "rows": {
-        "prints": 4766620,
-        "bba": 28280351,
-        "depth": 1468427
+        "prints": 4871332,
+        "bba": 29146096,
+        "depth": 1508445
       }
     }
   },
